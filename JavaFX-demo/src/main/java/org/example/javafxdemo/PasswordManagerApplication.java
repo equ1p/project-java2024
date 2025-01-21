@@ -11,10 +11,10 @@ import java.io.IOException;
 public class PasswordManagerApplication extends Application {
     @Override
     public void start(Stage stage) throws IOException {
-        DataBase.createTable();
+        DataBase.createUserTable();
         FXMLLoader fxmlLoader = new FXMLLoader(PasswordManagerApplication.class.getResource("FirstWindow.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 600, 400);
-        stage.getIcons().add(new Image(PasswordManagerApplication.class.getResourceAsStream("/org/example/javafxdemo/icon.png")));
+        stage.getIcons().add(new Image(PasswordManagerApplication.class.getResourceAsStream("icon.png")));
         scene.getStylesheets().add(PasswordManagerApplication.class.getResource("styles.css").toExternalForm());
         stage.setTitle("Password Manager");
         stage.setScene(scene);

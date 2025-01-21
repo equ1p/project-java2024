@@ -17,7 +17,7 @@ public class DataBase {
         }
     }
 
-    public static void createTable() {
+    public static void createUserTable() {
         String sql = "CREATE TABLE IF NOT EXISTS users (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT," +
                 "username TEXT NOT NULL UNIQUE," +
@@ -26,7 +26,23 @@ public class DataBase {
             stmt.execute(sql);
             System.out.println("Table 'users' is ready.");
         } catch (SQLException e) {
-            System.out.println("Failed to create table: " + e.getMessage());
+            System.out.println("Failed to create 'users' table: " + e.getMessage());
+        }
+    }
+
+    public static void createUserDataTable(String username) {
+        String tableName = "data_" + username;
+        String sql = "CREATE TABLE IF NOT EXISTS " + tableName + " (" +
+                "id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                "title TEXT NOT NULL," +
+                "login TEXT NOT NULL," +
+                "password TEXT NOT NULL," +
+                "last_modified TEXT NOT NULL);";
+        try (Connection conn = connect(); Statement stmt = conn.createStatement()) {
+            stmt.execute(sql);
+            System.out.println("Table '" + tableName + "' is ready for user '" + username + "'.");
+        } catch (SQLException e) {
+            System.out.println("Failed to create table for user '" + username + "': " + e.getMessage());
         }
     }
 }

@@ -10,7 +10,6 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -22,6 +21,12 @@ public class PasswordManagerController {
 
     @FXML
     private PasswordField passwordField;
+
+    private static String currentUser;
+
+    public static void setCurrentUser(String username) {
+        currentUser = username;
+    }
 
     @FXML
     private void handleLogin() {
@@ -35,17 +40,19 @@ public class PasswordManagerController {
 
         String sql = "SELECT * FROM users WHERE username = ? AND password = ?";
 
-        try (Connection conn = DataBase.connect();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, username);
-            pstmt.setString(2, password);
-            ResultSet rs = pstmt.executeQuery();
+        try (Connection conn = DataBase.connect()) {
+            assert conn != null;
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setString(1, username);
+                stmt.setString(2, password);
+                ResultSet rs = stmt.executeQuery();
 
-            if (rs.next()) {
-                showAlert(Alert.AlertType.INFORMATION, "Welcome", "Login successful!");
-                showMainAppWindow();
-            } else {
-                showAlert(Alert.AlertType.ERROR, "Error", "Invalid username or password!");
+                if (rs.next()) {
+                    setCurrentUser(username);
+                    showMainWindow();
+                } else {
+                    showAlert(Alert.AlertType.ERROR, "Error", "Invalid username or password!");
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -53,12 +60,16 @@ public class PasswordManagerController {
         }
     }
 
-    private void showMainAppWindow() {
+    private void showMainWindow() {
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("MainApp.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("MainWindow.fxml"));
             Scene scene = new Scene(fxmlLoader.load());
+
+            MainWindowController controller = fxmlLoader.getController();
+            controller.setCurrentUser(currentUser);
+
             Stage stage = new Stage();
-            stage.setTitle("Password Manager - Main App");
+            stage.setTitle("Password Manager");
             stage.setScene(scene);
             stage.show();
 
