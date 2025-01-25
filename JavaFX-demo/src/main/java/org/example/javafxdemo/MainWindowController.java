@@ -18,7 +18,12 @@ import java.sql.SQLException;
 
 public class MainWindowController {
 
+    public Label MainText;
+
     public Button addButton;
+
+    public Button LogOutButton;
+
     @FXML
     private TableView<UserData> dataTable;
 
@@ -133,11 +138,33 @@ public class MainWindowController {
         handleBack();
     }
 
+    @FXML
+    private void handleLogOut(){
+        currentUser = null;
+
+        Stage currentStage = (Stage) dataTable.getScene().getWindow();
+
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("FirstWindow.fxml"));
+            Scene scene = new Scene(fxmlLoader.load(), 600, 400);
+
+            Stage loginStage = new Stage();
+            loginStage.setTitle("Login");
+            loginStage.setScene(scene);
+            loginStage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        currentStage.close();
+    }
+
     private void showDetails(UserData data) {
         this.selectedData = data;
 
         dataTable.setVisible(false);
         addButton.setVisible(false);
+        LogOutButton.setVisible(false);
+        MainText.setVisible(false);
         detailsView.setVisible(true);
 
         titleLabel.setText(data.getTitle());
@@ -152,6 +179,8 @@ public class MainWindowController {
         detailsView.setVisible(false);
         dataTable.setVisible(true);
         addButton.setVisible(true);
+        LogOutButton.setVisible(true);
+        MainText.setVisible(true);
     }
 
     @FXML
