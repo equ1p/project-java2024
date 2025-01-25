@@ -16,7 +16,6 @@
             <Label fx:id="loginLabel" />
             <Label fx:id="passwordLabel" />
             <Label fx:id="lastModifiedLabel" style="-fx-font-size: 12px; -fx-text-fill: gray; " />
-            <Button text="Generate" onAction="#handleGeneratePassword"/>
             <HBox spacing="10" alignment="CENTER">
                 <Button text="Back" onAction="#handleBack" />
                 <Button text="Delete" onAction="#handleDelete"/>

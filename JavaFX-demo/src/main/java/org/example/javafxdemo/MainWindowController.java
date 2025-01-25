@@ -149,12 +149,5 @@ public class MainWindowController {
         addButton.setVisible(true);
     }
 
-    @FXML
-    private void handleGeneratePassword() {
-        String newPassword = generateRandomPassword(10);
 
-        selectedData.setPassword(newPassword);
-
-        passwordLabel.setText("Password: " + newPassword);
-    }
 }
