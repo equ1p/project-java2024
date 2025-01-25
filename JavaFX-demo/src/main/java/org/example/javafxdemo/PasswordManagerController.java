@@ -69,6 +69,10 @@ public class PasswordManagerController {
             controller.setCurrentUser(currentUser);
 
             Stage stage = new Stage();
+
+            stage.setMinWidth(500);
+            stage.setMinHeight(550);
+
             stage.setTitle("Password Manager");
             stage.setScene(scene);
             stage.show();
@@ -86,6 +90,10 @@ public class PasswordManagerController {
             FXMLLoader fxmlLoader = new FXMLLoader(PasswordManagerApplication.class.getResource("RegisterController.fxml"));
             Scene scene = new Scene(fxmlLoader.load(), 400, 300);
             Stage stage = new Stage();
+
+            stage.setMinWidth(400);
+            stage.setMinHeight(300);
+
             stage.setTitle("Create Account");
             stage.setScene(scene);
             stage.show();

@@ -9,6 +9,10 @@
     -fx-font-size: 14px;
 }
 
+.vbox{
+    -fx-padding: 0 0 0 5;
+}
+
 .text-field, .password-field {
     -fx-background-color: #2e2e2e;
     -fx-text-fill: #ffffff;

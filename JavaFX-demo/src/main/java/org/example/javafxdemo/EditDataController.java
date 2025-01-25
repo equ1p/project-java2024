@@ -71,5 +71,11 @@ public class EditDataController {
 
         titleField.getScene().getWindow().hide();
     }
+
+    @FXML
+    private void handleRegenerate(){
+        String newPassword = GeneratePassword.generateRandomPassword(20);
+        passwordField.setText(newPassword);
+    }
 }
 

@@ -14,6 +14,10 @@ public class PasswordManagerApplication extends Application {
         DataBase.createUserTable();
         FXMLLoader fxmlLoader = new FXMLLoader(PasswordManagerApplication.class.getResource("FirstWindow.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 600, 400);
+
+        stage.setMinWidth(400);
+        stage.setMinHeight(300);
+
         stage.getIcons().addAll(new Image("file:src/main/resources/org/example/javafxdemo/icon16x16.png"),
                 new Image("file:src/main/resources/org/example/javafxdemo/icon32x32.png"),
                 new Image("file:src/main/resources/org/example/javafxdemo/icon64x64.png"));
