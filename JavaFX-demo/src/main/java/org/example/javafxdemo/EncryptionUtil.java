@@ -23,8 +23,6 @@ public class EncryptionUtil {
         byte[] encryptedBytes = cipher.doFinal(data.getBytes());
         String encryptedBase64 = Base64.getEncoder().encodeToString(encryptedBytes);
         String ivBase64 = Base64.getEncoder().encodeToString(ivBytes);
-//        System.out.println("PlainData: " + data);
-//        System.out.println("encryptedBase64: " +ivBase64 + ":" + encryptedBase64);
 
         return ivBase64 + ":" + encryptedBase64;
     }
@@ -45,6 +43,7 @@ public class EncryptionUtil {
         cipher.init(Cipher.DECRYPT_MODE, key, ivSpec);
 
         byte[] decryptedBytes = cipher.doFinal(encryptedBytes);
+
         return new String(decryptedBytes);
     }
 }

@@ -62,12 +62,13 @@ public class PasswordManagerController {
                     showAlert(Alert.AlertType.ERROR, "Error", "User not found!");
                 }
             }
+            catch (Exception e) {
+                e.printStackTrace();
+                showAlert(Alert.AlertType.ERROR, "Error", "Decryption failed.");
+            }
         } catch (SQLException e) {
             e.printStackTrace();
             showAlert(Alert.AlertType.ERROR, "Error", "An error occurred while logging in.");
-        } catch (Exception e) {
-            e.printStackTrace();
-            showAlert(Alert.AlertType.ERROR, "Error", "Decryption failed.");
         }
     }
     private void showMainWindow() {

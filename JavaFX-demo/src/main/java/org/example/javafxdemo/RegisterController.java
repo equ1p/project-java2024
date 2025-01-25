@@ -53,7 +53,6 @@ public class RegisterController {
 
             showAlert(Alert.AlertType.INFORMATION, "Success", "User registered successfully!");
             closeWindow();
-                showAlert(Alert.AlertType.INFORMATION, "Success", "User registered successfully!");
             }
         } catch (SQLException e) {
             if (e.getMessage().contains("UNIQUE")) {
