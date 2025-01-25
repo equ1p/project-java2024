@@ -38,28 +38,38 @@ public class PasswordManagerController {
             return;
         }
 
-        String sql = "SELECT * FROM users WHERE username = ? AND password = ?";
+        String sql = "SELECT encrypted_password FROM users WHERE username = ?";
 
         try (Connection conn = DataBase.connect()) {
             assert conn != null;
-            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-                stmt.setString(1, username);
-                stmt.setString(2, password);
-                ResultSet rs = stmt.executeQuery();
+            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+                pstmt.setString(1, username);
+                ResultSet rs = pstmt.executeQuery();
 
                 if (rs.next()) {
-                    setCurrentUser(username);
-                    showMainWindow();
+                    String encryptedPassword = rs.getString("encrypted_password");
+
+                    String decryptedPassword = EncryptionUtil.decrypt(encryptedPassword);
+
+                    if (decryptedPassword.equals(password)) {
+                        setCurrentUser(username);
+                        showMainWindow();
+                    } else {
+                        showAlert(Alert.AlertType.ERROR, "Error", "Invalid username or password!");
+                    }
                 } else {
-                    showAlert(Alert.AlertType.ERROR, "Error", "Invalid username or password!");
+                    showAlert(Alert.AlertType.ERROR, "Error", "User not found!");
                 }
             }
         } catch (SQLException e) {
             e.printStackTrace();
             showAlert(Alert.AlertType.ERROR, "Error", "An error occurred while logging in.");
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert(Alert.AlertType.ERROR, "Error", "Decryption failed.");
         }
     }
-
     private void showMainWindow() {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("MainWindow.fxml"));

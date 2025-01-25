@@ -27,17 +27,31 @@ public class RegisterController {
             return;
         }
 
-        String sql = "INSERT INTO users (username, password) VALUES (?, ?)";
+        String encryptedPassword = null;
 
-        try (Connection conn = DataBase.connect();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, username);
-            pstmt.setString(2, password);
-            pstmt.executeUpdate();
+        try {
+            encryptedPassword = EncryptionUtil.encrypt(password);
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert(Alert.AlertType.ERROR, "Error", "Encryption failed!");
+            return;
+        }
 
-            DataBase.createUserDataTable(username);
+        String sql = "INSERT INTO users (username, encrypted_password) VALUES (?, ?)";
 
-            showAlert(Alert.AlertType.INFORMATION, "Success", "User registered successfully!");
+        try (Connection conn = DataBase.connect()) {
+            assert conn != null;
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+
+                stmt.setString(1, username);
+                stmt.setString(2, encryptedPassword);
+                stmt.executeUpdate();
+
+                DataBase.createUserDataTable(username);
+
+                showAlert(Alert.AlertType.INFORMATION, "Success", "User registered successfully!");
+            }
         } catch (SQLException e) {
             if (e.getMessage().contains("UNIQUE")) {
                 showAlert(Alert.AlertType.ERROR, "Error", "Username already exists!");
