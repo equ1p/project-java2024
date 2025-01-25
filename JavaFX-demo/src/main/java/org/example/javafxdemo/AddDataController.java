@@ -64,17 +64,16 @@ public class AddDataController {
 
     @FXML
     private void handleGeneratePassword() {
-        GeneratePassword password = new GeneratePassword();
-        String Password = password.generateRandomPassword(20);
+        GeneratePassword pswd = new GeneratePassword();
+        String newPassword = pswd.generateRandomPassword(10);
 
-        passwordField.setText(Password);
+        passwordField.setText(newPassword);
     }
 
     @FXML
     private void handleCancel() {
         closeWindow();
     }
-
 
     private void closeWindow() {
         Stage stage = (Stage) titleField.getScene().getWindow();
