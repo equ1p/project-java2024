@@ -60,7 +60,23 @@ public class MainWindowController {
     public void initialize() {
 
         titleColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
+        titleColumn.setCellFactory(column -> new TableCell<>() {
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                    setGraphic(null);
+                } else {
+                    setText(item);
+                    setAlignment(javafx.geometry.Pos.CENTER);
+                    setStyle("-fx-font-size: 16px;");
+                }
+            }
+        });
         dataTable.setItems(dataList);
+
+        dataTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
         dataTable.getSelectionModel().selectedItemProperty().addListener((_, oldSelection, newSelection) -> {
             if (newSelection != null) {

@@ -83,6 +83,8 @@ public class PasswordManagerController {
 
             stage.setMinWidth(500);
             stage.setMinHeight(550);
+            stage.setMaxHeight(600);
+            stage.setMaxWidth(800);
 
             stage.setTitle("Password Manager");
             stage.setScene(scene);
