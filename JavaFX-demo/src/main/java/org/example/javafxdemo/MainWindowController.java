@@ -76,13 +76,22 @@ public class MainWindowController {
 
                 dataList.clear();
                 while (rs.next()) {
-                    dataList.add(new UserData(
-                            rs.getInt("id"),
-                            rs.getString("title"),
-                            rs.getString("login"),
-                            rs.getString("password"),
-                            rs.getString("last_modified")
-                    ));
+                    try {
+                        String decryptedTitle = EncryptionUtil.decrypt(rs.getString("title"));
+                        String decryptedLogin = EncryptionUtil.decrypt(rs.getString("login"));
+                        String decryptedPassword = EncryptionUtil.decrypt(rs.getString("password"));
+
+                        dataList.add(new UserData(
+                                rs.getInt("id"),
+                                decryptedTitle,
+                                decryptedLogin,
+                                decryptedPassword,
+                                rs.getString("last_modified")
+                        ));
+                    } catch (Exception e) {
+                        System.out.println("Error during decryption: " + e.getMessage());
+                        e.printStackTrace();
+                    }
                 }
                 dataTable.setItems(dataList);
             }

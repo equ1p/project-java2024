@@ -45,14 +45,28 @@ public class AddDataController {
             return;
         }
 
+        String encryptedTitle = null;
+        String encryptedLogin = null;
+        String encryptedPassword = null;
+
+        try {
+            encryptedTitle = EncryptionUtil.encrypt(title);
+            encryptedLogin = EncryptionUtil.encrypt(login);
+            encryptedPassword = EncryptionUtil.encrypt(password);
+        } catch (Exception e) {
+            System.out.println("Error during encryption: " + e.getMessage());
+            e.printStackTrace();
+            return;
+        }
+
         String tableName = "data_" + currentUser;
         String sql = "INSERT INTO " + tableName + " (title, login, password, last_modified) VALUES (?, ?, ?, datetime('now'))";
 
         try (Connection conn = DataBase.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, title);
-            pstmt.setString(2, login);
-            pstmt.setString(3, password);
+            pstmt.setString(1, encryptedTitle);
+            pstmt.setString(2, encryptedLogin);
+            pstmt.setString(3, encryptedPassword);
             pstmt.executeUpdate();
             System.out.println("Data added successfully!");
             closeWindow();
