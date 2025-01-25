@@ -101,6 +101,10 @@ public class MainWindowController {
             controller.setCurrentUser(currentUser);
 
             Stage stage = new Stage();
+
+            stage.setMinWidth(400);
+            stage.setMinHeight(350);
+
             stage.setTitle("Add New Data");
             stage.setScene(scene);
             stage.showAndWait();
@@ -161,6 +165,10 @@ public class MainWindowController {
             controller.setDataToEdit(selectedData);
 
             Stage stage = new Stage();
+
+            stage.setMinWidth(400);
+            stage.setMinHeight(300);
+
             stage.setTitle("Edit Data");
             stage.setScene(scene);
             stage.showAndWait();

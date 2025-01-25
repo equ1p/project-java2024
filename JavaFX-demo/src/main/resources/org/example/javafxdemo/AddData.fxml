@@ -7,11 +7,7 @@
             stylesheets="@styles.css" fx:controller="org.example.javafxdemo.AddDataController">
     <top>
         <HBox alignment="TOP_LEFT" spacing="10" style="-fx-padding: 10;">
-            <Button onAction="#handleCancel" text="" style="-fx-background-color: transparent;">
-                <graphic>
-                    <Label text="⟵" style="-fx-font-size: 20px; -fx-text-fill: white; -fx-background-color: #3a3a3a" />
-                </graphic>
-            </Button>
+            <Button onAction="#handleCancel" text="⟵"/>
         </HBox>
     </top>
     <center>

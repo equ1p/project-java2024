@@ -9,5 +9,8 @@
     <TextField fx:id="titleField" promptText="Title" />
     <TextField fx:id="loginField" promptText="Login" />
     <TextField fx:id="passwordField" promptText="Password" />
-    <Button text="Save" onAction="#handleSave" />
+    <HBox spacing="10" alignment="CENTER">
+        <Button text="Regenerate" onAction="#handleRegenerate"/>
+        <Button text="Save" onAction="#handleSave" />
+    </HBox>
 </VBox>
