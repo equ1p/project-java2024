@@ -144,6 +144,7 @@ public class MainWindowController {
 
     @FXML
     private void handleBack() {
+        loadData();
         detailsView.setVisible(false);
         dataTable.setVisible(true);
         addButton.setVisible(true);
@@ -163,6 +164,7 @@ public class MainWindowController {
             stage.setTitle("Edit Data");
             stage.setScene(scene);
             stage.showAndWait();
+            loadData();
         } catch (IOException e) {
             e.printStackTrace();
         }
