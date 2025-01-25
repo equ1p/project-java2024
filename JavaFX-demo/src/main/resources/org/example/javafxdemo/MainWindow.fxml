@@ -18,6 +18,7 @@
             <Label fx:id="lastModifiedLabel" style="-fx-font-size: 12px; -fx-text-fill: gray; " />
             <HBox spacing="10" alignment="CENTER">
                 <Button text="Back" onAction="#handleBack" />
+                <Button text="Change" onAction="#handleChange" />
                 <Button text="Delete" onAction="#handleDelete"/>
             </HBox>
         </VBox>

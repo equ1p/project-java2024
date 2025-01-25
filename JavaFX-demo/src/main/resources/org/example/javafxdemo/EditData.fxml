@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="org.example.javafxdemo.EditDataController"
+      stylesheets="@styles.css" spacing="10" alignment="CENTER">
+    <Label text="Edit Data" style="-fx-font-size: 18px;" />
+    <TextField fx:id="titleField" promptText="Title" />
+    <TextField fx:id="loginField" promptText="Login" />
+    <TextField fx:id="passwordField" promptText="Password" />
+    <Button text="Save" onAction="#handleSave" />
+</VBox>

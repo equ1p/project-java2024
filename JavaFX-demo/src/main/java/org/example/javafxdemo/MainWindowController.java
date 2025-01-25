@@ -149,5 +149,22 @@ public class MainWindowController {
         addButton.setVisible(true);
     }
 
+    @FXML
+    private void handleChange(){
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(PasswordManagerApplication.class.getResource("EditData.fxml"));
+            Scene scene = new Scene(fxmlLoader.load());
 
+            EditDataController controller = fxmlLoader.getController();
+            controller.setCurrentUser(currentUser);
+            controller.setDataToEdit(selectedData);
+
+            Stage stage = new Stage();
+            stage.setTitle("Edit Data");
+            stage.setScene(scene);
+            stage.showAndWait();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }
