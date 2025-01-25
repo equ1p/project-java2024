@@ -57,12 +57,14 @@ public class EditDataController {
         }
 
         sql = "INSERT INTO " + tableName + " (title, login, password, last_modified) VALUES (?, ?, ?, datetime('now'))";
-        try (Connection conn = DataBase.connect();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, titleField.getText());
-            pstmt.setString(2, loginField.getText());
-            pstmt.setString(3, passwordField.getText());
-            pstmt.executeUpdate();
+        try (Connection conn = DataBase.connect()) {
+            assert conn != null;
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setString(1, titleField.getText());
+                stmt.setString(2, loginField.getText());
+                stmt.setString(3, passwordField.getText());
+                stmt.executeUpdate();
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
