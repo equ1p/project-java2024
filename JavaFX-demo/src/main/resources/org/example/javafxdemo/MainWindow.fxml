@@ -2,23 +2,28 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+<VBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" stylesheets="@styles.css"
       fx:controller="org.example.javafxdemo.MainWindowController" spacing="10" alignment="CENTER">
     <Label text="Your Data" style="-fx-font-size: 24px;" />
-
-    <TableView fx:id="dataTable" prefHeight="400" prefWidth="600" visible="true">
-        <columns>
-            <TableColumn text="Title" fx:id="titleColumn" prefWidth="600" />
-        </columns>
-    </TableView>
-    <Button text="+" onAction="#handleAddData"/>
-    <VBox fx:id="detailsView" visible="false" spacing="10" alignment="CENTER">
-        <Label fx:id="titleLabel" style="-fx-font-size: 20px;" />
-        <Label fx:id="loginLabel" />
-        <Label fx:id="passwordLabel" />
-        <Label fx:id="lastModifiedLabel" style="-fx-font-size: 12px; -fx-text-fill: gray;" />
-        <Button text="Back" onAction="#handleBack" />
-    </VBox>
+    <StackPane fx:id="stackPane" prefWidth="600" prefHeight="400">
+        <TableView fx:id="dataTable" prefHeight="400" prefWidth="600" visible="true">
+            <columns>
+                <TableColumn text="Title" fx:id="titleColumn" prefWidth="600"/>
+            </columns>
+        </TableView>
+        <VBox fx:id="detailsView" visible="false" spacing="10" alignment="CENTER">
+            <Label fx:id="titleLabel" style="-fx-font-size: 20px;" />
+            <Label fx:id="loginLabel" />
+            <Label fx:id="passwordLabel" />
+            <Label fx:id="lastModifiedLabel" style="-fx-font-size: 12px; -fx-text-fill: gray; " />
+            <Button text="Generate" onAction="#handleGeneratePassword"/>
+            <HBox spacing="10" alignment="CENTER">
+                <Button text="Back" onAction="#handleBack" />
+                <Button text="Delete" onAction="#handleDelete"/>
+            </HBox>
+        </VBox>
+    </StackPane>
+    <Button fx:id="addButton" text="+" onAction="#handleAddData"/>
 </VBox>
 
 

@@ -34,4 +34,7 @@ public class UserData {
     public String getLastModified() {
         return lastModified;
     }
+
+    public void setPassword(String newPassword) {
+    }
 }

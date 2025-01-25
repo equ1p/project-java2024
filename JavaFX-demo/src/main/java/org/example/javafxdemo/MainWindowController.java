@@ -5,10 +5,7 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -21,6 +18,7 @@ import java.sql.SQLException;
 
 public class MainWindowController {
 
+    public Button addButton;
     @FXML
     private TableView<UserData> dataTable;
 
@@ -42,6 +40,8 @@ public class MainWindowController {
     @FXML
     private Label lastModifiedLabel;
 
+    private UserData selectedData;
+
     private final ObservableList<UserData> dataList = FXCollections.observableArrayList();
     private String currentUser;
 
@@ -57,36 +57,36 @@ public class MainWindowController {
         titleColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
         dataTable.setItems(dataList);
 
-        dataTable.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+        dataTable.getSelectionModel().selectedItemProperty().addListener((_, oldSelection, newSelection) -> {
             if (newSelection != null) {
                 showDetails(newSelection);
             }
         });
-
-        //loadData();
     }
+
 
     private void loadData() {
         String tableName = "data_" + currentUser;
         String sql = "SELECT * FROM " + tableName;
 
-        try (Connection conn = DataBase.connect();
-             PreparedStatement stmt = conn.prepareStatement(sql);
-             ResultSet rs = stmt.executeQuery()) {
+        try (Connection conn = DataBase.connect()) {
+            assert conn != null;
+            try (PreparedStatement stmt = conn.prepareStatement(sql);
+                 ResultSet rs = stmt.executeQuery()) {
 
-            dataList.clear();
-            while (rs.next()) {
-                dataList.add(new UserData(
-                        rs.getInt("id"),
-                        rs.getString("title"),
-                        rs.getString("login"),
-                        rs.getString("password"),
-                        rs.getString("last_modified")
-                ));
+                dataList.clear();
+                while (rs.next()) {
+                    dataList.add(new UserData(
+                            rs.getInt("id"),
+                            rs.getString("title"),
+                            rs.getString("login"),
+                            rs.getString("password"),
+                            rs.getString("last_modified")
+                    ));
+                }
+                dataTable.setItems(dataList);
             }
-            dataTable.setItems(dataList);
         } catch (SQLException e) {
-            System.out.printf("Error: non valid table");
             e.printStackTrace();
         }
     }
@@ -111,8 +111,29 @@ public class MainWindowController {
         }
     }
 
+    @FXML
+    private void handleDelete() {
+        String tableName = "data_" + currentUser;
+        String sql = "DELETE FROM " + tableName + " WHERE id = ?";
+
+        try (Connection conn = DataBase.connect()) {
+            assert conn != null;
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setInt(1, selectedData.getId());
+                stmt.executeUpdate();
+                dataList.remove(selectedData);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        handleBack();
+    }
+
     private void showDetails(UserData data) {
+        this.selectedData = data;
+
         dataTable.setVisible(false);
+        addButton.setVisible(false);
         detailsView.setVisible(true);
 
         titleLabel.setText(data.getTitle());
@@ -125,5 +146,15 @@ public class MainWindowController {
     private void handleBack() {
         detailsView.setVisible(false);
         dataTable.setVisible(true);
+        addButton.setVisible(true);
+    }
+
+    @FXML
+    private void handleGeneratePassword() {
+        String newPassword = generateRandomPassword(10);
+
+        selectedData.setPassword(newPassword);
+
+        passwordLabel.setText("Password: " + newPassword);
     }
 }
