@@ -4,6 +4,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.stage.Stage;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -50,6 +51,8 @@ public class RegisterController {
 
                 DataBase.createUserDataTable(username);
 
+            showAlert(Alert.AlertType.INFORMATION, "Success", "User registered successfully!");
+            closeWindow();
                 showAlert(Alert.AlertType.INFORMATION, "Success", "User registered successfully!");
             }
         } catch (SQLException e) {
@@ -60,6 +63,11 @@ public class RegisterController {
                 showAlert(Alert.AlertType.ERROR, "Error", "An error occurred while registering.");
             }
         }
+    }
+
+    private void closeWindow() {
+        Stage stage = (Stage) usernameField.getScene().getWindow();
+        stage.close();
     }
 
     private void showAlert(Alert.AlertType alertType, String title, String content) {
