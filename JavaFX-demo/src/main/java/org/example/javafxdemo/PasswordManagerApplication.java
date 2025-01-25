@@ -7,7 +7,6 @@ import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.util.Objects;
 
 public class PasswordManagerApplication extends Application {
     @Override
@@ -15,7 +14,9 @@ public class PasswordManagerApplication extends Application {
         DataBase.createUserTable();
         FXMLLoader fxmlLoader = new FXMLLoader(PasswordManagerApplication.class.getResource("FirstWindow.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 600, 400);
-        stage.getIcons().add(new Image(Objects.requireNonNull(PasswordManagerApplication.class.getResourceAsStream("/org/example/javafxdemo/icon.png"))));
+        stage.getIcons().addAll(new Image("file:src/main/resources/org/example/javafxdemo/icon16x16.png"),
+                new Image("file:src/main/resources/org/example/javafxdemo/icon32x32.png"),
+                new Image("file:src/main/resources/org/example/javafxdemo/icon64x64.png"));
         scene.getStylesheets().add(PasswordManagerApplication.class.getResource("styles.css").toExternalForm());
         stage.setTitle("Password Manager");
         stage.setScene(scene);
