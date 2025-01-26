@@ -1,49 +1,77 @@
 package org.example.javafxdemo;
 
+
 import javax.crypto.Cipher;
-import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
-import java.security.SecureRandom;
+import java.security.*;
 import java.util.Base64;
 
 public class EncryptionUtil {
-    private static final String ALGORITHM = "AES/CBC/PKCS5Padding";
-    private static final int IV_LENGTH = 16;
-    private static final String SECRET_KEY = "1234567890123456";
+    private static final String RSA_ALGORITHM = "RSA";
+    private static final String AES_ALGORITHM = "AES/GCM/NoPadding";
+    private static final int RSA_KEY_SIZE = 2048;
+    private static final int AES_KEY_SIZE = 256;
+    private static final int IV_LENGTH = 12;
+    public static final int TAG_LENGTH = 128;
 
-    public static String encrypt(String data) throws Exception {
-        byte[] ivBytes = new byte[IV_LENGTH];
-        new SecureRandom().nextBytes(ivBytes);
-        IvParameterSpec ivSpec = new IvParameterSpec(ivBytes);
-
-        SecretKeySpec key = new SecretKeySpec(SECRET_KEY.getBytes(), "AES");
-        Cipher cipher = Cipher.getInstance(ALGORITHM);
-        cipher.init(Cipher.ENCRYPT_MODE, key, ivSpec);
-
-        byte[] encryptedBytes = cipher.doFinal(data.getBytes());
-        String encryptedBase64 = Base64.getEncoder().encodeToString(encryptedBytes);
-        String ivBase64 = Base64.getEncoder().encodeToString(ivBytes);
-
-        return ivBase64 + ":" + encryptedBase64;
+    public static KeyPair generateRSAKeyPair() throws Exception {
+        KeyPairGenerator keyGen = KeyPairGenerator.getInstance(RSA_ALGORITHM);
+        keyGen.initialize(RSA_KEY_SIZE);
+        return keyGen.generateKeyPair();
     }
 
-    public static String decrypt(String encryptedData) throws Exception {
+    private static SecretKey generateAESKey() throws Exception {
+        KeyGenerator keyGen = KeyGenerator.getInstance("AES");
+        keyGen.init(AES_KEY_SIZE);
+        return keyGen.generateKey();
+    }
+
+    public static String encrypt(String data, PublicKey rsaPublicKey) throws Exception {
+        SecretKey aesKey = generateAESKey();
+
+        byte[] ivBytes = new byte[IV_LENGTH];
+        new SecureRandom().nextBytes(ivBytes);
+
+        Cipher aesCipher = Cipher.getInstance(AES_ALGORITHM);
+        GCMParameterSpec gcmSpec = new GCMParameterSpec(TAG_LENGTH, ivBytes);
+        aesCipher.init(Cipher.ENCRYPT_MODE, aesKey, gcmSpec);
+        byte[] encryptedData = aesCipher.doFinal(data.getBytes());
+
+        Cipher rsaCipher = Cipher.getInstance(RSA_ALGORITHM);
+        rsaCipher.init(Cipher.ENCRYPT_MODE, rsaPublicKey);
+        byte[] encryptedAESKey = rsaCipher.doFinal(aesKey.getEncoded());
+
+        String encryptedAESKeyBase64 = Base64.getEncoder().encodeToString(encryptedAESKey);
+        String ivBase64 = Base64.getEncoder().encodeToString(ivBytes);
+        String encryptedDataBase64 = Base64.getEncoder().encodeToString(encryptedData);
+
+        return encryptedAESKeyBase64 + ":" + ivBase64 + ":" + encryptedDataBase64;
+    }
+
+    public static String decrypt(String encryptedData, PrivateKey rsaPrivateKey) throws Exception {
         String[] parts = encryptedData.split(":");
-        if (parts.length != 2) {
-            throw new IllegalArgumentException("Wrong data format for decryption");
+        if (parts.length != 3) {
+            throw new IllegalArgumentException("Invalid encrypted data format");
         }
 
-        byte[] ivBytes = Base64.getDecoder().decode(parts[0]);
-        byte[] encryptedBytes = Base64.getDecoder().decode(parts[1]);
+        byte[] encryptedAESKey = Base64.getDecoder().decode(parts[0]);
+        byte[] ivBytes = Base64.getDecoder().decode(parts[1]);
+        byte[] encryptedContent = Base64.getDecoder().decode(parts[2]);
 
-        IvParameterSpec ivSpec = new IvParameterSpec(ivBytes);
-        SecretKeySpec key = new SecretKeySpec(SECRET_KEY.getBytes(), "AES");
+        Cipher rsaCipher = Cipher.getInstance(RSA_ALGORITHM);
+        rsaCipher.init(Cipher.DECRYPT_MODE, rsaPrivateKey);
+        byte[] aesKeyBytes = rsaCipher.doFinal(encryptedAESKey);
 
-        Cipher cipher = Cipher.getInstance(ALGORITHM);
-        cipher.init(Cipher.DECRYPT_MODE, key, ivSpec);
+        SecretKeySpec aesKey = new SecretKeySpec(aesKeyBytes, "AES");
 
-        byte[] decryptedBytes = cipher.doFinal(encryptedBytes);
+        Cipher aesCipher = Cipher.getInstance(AES_ALGORITHM);
+        GCMParameterSpec gcmSpec = new GCMParameterSpec(TAG_LENGTH, ivBytes);
+        aesCipher.init(Cipher.DECRYPT_MODE, aesKey, gcmSpec);
+        byte[] decryptedData = aesCipher.doFinal(encryptedContent);
 
-        return new String(decryptedBytes);
+        return new String(decryptedData);
     }
 }

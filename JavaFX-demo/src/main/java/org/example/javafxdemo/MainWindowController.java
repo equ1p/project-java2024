@@ -11,6 +11,8 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.security.KeyPair;
+import java.security.PrivateKey;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -50,9 +52,19 @@ public class MainWindowController {
     private final ObservableList<UserData> dataList = FXCollections.observableArrayList();
     private String currentUser;
 
+    private PrivateKey rsaPrivateKey;
+
     public void setCurrentUser(String currentUser) {
         this.currentUser = currentUser;
         System.out.println("MainWindowController: Current user set to: " + currentUser);
+
+        try {
+            KeyPair keyPair = KeyStorage.loadUserKeys(currentUser);
+            this.rsaPrivateKey = keyPair.getPrivate();
+        } catch (Exception e) {
+            System.out.println("Error loading private key for user " + currentUser + ": " + e.getMessage());
+            e.printStackTrace();
+        }
         loadData();
     }
 
@@ -98,9 +110,9 @@ public class MainWindowController {
                 dataList.clear();
                 while (rs.next()) {
                     try {
-                        String decryptedTitle = EncryptionUtil.decrypt(rs.getString("title"));
-                        String decryptedLogin = EncryptionUtil.decrypt(rs.getString("login"));
-                        String decryptedPassword = EncryptionUtil.decrypt(rs.getString("password"));
+                        String decryptedTitle = EncryptionUtil.decrypt(rs.getString("title"), rsaPrivateKey);
+                        String decryptedLogin = EncryptionUtil.decrypt(rs.getString("login"), rsaPrivateKey);
+                        String decryptedPassword = EncryptionUtil.decrypt(rs.getString("password"), rsaPrivateKey);
 
                         dataList.add(new UserData(
                                 rs.getInt("id"),

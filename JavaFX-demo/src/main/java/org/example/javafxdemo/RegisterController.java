@@ -6,6 +6,7 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
+import java.security.KeyPair;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -28,25 +29,30 @@ public class RegisterController {
             return;
         }
 
+        byte[] publicKeyBytes;
+        byte[] privateKeyBytes;
         String encryptedPassword = null;
 
         try {
-            encryptedPassword = EncryptionUtil.encrypt(password);
+            KeyPair keyPair = EncryptionUtil.generateRSAKeyPair();
+            publicKeyBytes = keyPair.getPublic().getEncoded();
+            privateKeyBytes = keyPair.getPrivate().getEncoded();
+
+            encryptedPassword = EncryptionUtil.encrypt(password, keyPair.getPublic());
         } catch (Exception e) {
             e.printStackTrace();
-            showAlert(Alert.AlertType.ERROR, "Error", "Encryption failed!");
+            showAlert(Alert.AlertType.ERROR, "Error", "Failed to generate keys or encrypt password!");
             return;
         }
 
-        String sql = "INSERT INTO users (username, encrypted_password) VALUES (?, ?)";
-
+        String sql = "INSERT INTO users (username, encrypted_password, public_key, private_key) VALUES (?, ?, ?, ?)";
         try (Connection conn = DataBase.connect()) {
             assert conn != null;
             try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-
                 stmt.setString(1, username);
                 stmt.setString(2, encryptedPassword);
+                stmt.setBytes(3, publicKeyBytes);
+                stmt.setBytes(4, privateKeyBytes);
                 stmt.executeUpdate();
 
                 DataBase.createUserDataTable(username);

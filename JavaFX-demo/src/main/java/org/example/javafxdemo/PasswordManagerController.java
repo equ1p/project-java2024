@@ -9,6 +9,7 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.security.PrivateKey;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -23,6 +24,8 @@ public class PasswordManagerController {
     private PasswordField passwordField;
 
     private static String currentUser;
+
+    private PrivateKey rsaPrivateKey;
 
     public static void setCurrentUser(String username) {
         currentUser = username;
@@ -50,7 +53,9 @@ public class PasswordManagerController {
                 if (rs.next()) {
                     String encryptedPassword = rs.getString("encrypted_password");
 
-                    String decryptedPassword = EncryptionUtil.decrypt(encryptedPassword);
+                    rsaPrivateKey = KeyStorage.loadUserKeys(username).getPrivate();
+
+                    String decryptedPassword = EncryptionUtil.decrypt(encryptedPassword, rsaPrivateKey);
 
                     if (decryptedPassword.equals(password)) {
                         setCurrentUser(username);
@@ -61,8 +66,7 @@ public class PasswordManagerController {
                 } else {
                     showAlert(Alert.AlertType.ERROR, "Error", "User not found!");
                 }
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 e.printStackTrace();
                 showAlert(Alert.AlertType.ERROR, "Error", "Decryption failed.");
             }
@@ -70,8 +74,7 @@ public class PasswordManagerController {
             e.printStackTrace();
             showAlert(Alert.AlertType.ERROR, "Error", "An error occurred while logging in.");
         }
-    }
-    private void showMainWindow() {
+    }    private void showMainWindow() {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("MainWindow.fxml"));
             Scene scene = new Scene(fxmlLoader.load());

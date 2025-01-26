@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 public class DataBase {
+
     private static final String DB_URL = "jdbc:sqlite:users.db";
 
     public static Connection connect() {
@@ -21,7 +22,9 @@ public class DataBase {
         String sql = "CREATE TABLE IF NOT EXISTS users (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT," +
                 "username TEXT NOT NULL UNIQUE," +
-                "encrypted_password TEXT NOT NULL);";
+                "encrypted_password TEXT NOT NULL," +
+                "public_key BLOB," +
+                "private_key BLOB);";
         try (Connection conn = connect(); Statement stmt = conn.createStatement()) {
             stmt.execute(sql);
             System.out.println("Table 'users' is ready.");

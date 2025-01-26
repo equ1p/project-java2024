@@ -5,12 +5,14 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
+import java.security.KeyPair;
+import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 public class AddDataController {
-
     @FXML
     private TextField titleField;
 
@@ -22,9 +24,18 @@ public class AddDataController {
 
     private String currentUser;
 
+    private PublicKey rsaPublicKey;
+
     public void setCurrentUser(String currentUser) {
         this.currentUser = currentUser;
         System.out.println("AddDataController: Current user set to: " + currentUser);
+
+        try {
+            rsaPublicKey = KeyStorage.loadUserKeys(currentUser).getPublic();
+        } catch (Exception e) {
+            System.out.println("Error loading public key for user " + currentUser + ": " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     @FXML
@@ -50,9 +61,9 @@ public class AddDataController {
         String encryptedPassword = null;
 
         try {
-            encryptedTitle = EncryptionUtil.encrypt(title);
-            encryptedLogin = EncryptionUtil.encrypt(login);
-            encryptedPassword = EncryptionUtil.encrypt(password);
+            encryptedTitle = EncryptionUtil.encrypt(title, rsaPublicKey);
+            encryptedLogin = EncryptionUtil.encrypt(login, rsaPublicKey);
+            encryptedPassword = EncryptionUtil.encrypt(password, rsaPublicKey);
         } catch (Exception e) {
             System.out.println("Error during encryption: " + e.getMessage());
             e.printStackTrace();
@@ -79,7 +90,7 @@ public class AddDataController {
     @FXML
     private void handleGeneratePassword() {
         GeneratePassword pswd = new GeneratePassword();
-        String newPassword = pswd.generateRandomPassword(10);
+        String newPassword = pswd.generateRandomPassword(20);
 
         passwordField.setText(newPassword);
     }
