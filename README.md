@@ -6,9 +6,9 @@ Celem projektu jest stworzenie Password Managera, czyli aplikacji, która umożl
 
 Funkcjonalności
 1) Rejestracja i logowanie użytkownika
+    Logowanie użytkownika za pomocą stworzonego konta.
     Tworzenie nowego konta użytkownika.
-    Logowanie do aplikacji przy użyciu hasła głównego (master password), które nie jest przechowywane w formie jawnej (użycie funkcji skrótu, np. SHA-256).
-   
+      
     Okno przy uruchomiemiu programu
    
    ![image](LaunchScreen.png)
@@ -19,7 +19,7 @@ Funkcjonalności
 
 
 
-2) Przechowywanie haseł
+3) Przechowywanie haseł
     Dodawanie nowych haseł do bazy danych (np. login, hasło, URL strony).
     Odczyt zapisanych haseł po uwierzytelnieniu użytkownika.
     Usuwanie lub edytowanie istniejących wpisów.
@@ -37,7 +37,7 @@ Funkcjonalności
    ![image](DataDisplayScreen.png)
 
 
-3) Interfejs
+4) Interfejs
     Interfejs aplikacji został stworzony przy użyciu biblioteki JavaFX z wykorzystaniem stylizacji za pomocą CSS, co zapewnia intuicyjną i estetyczną obsługę.
 3) Generowanie haseł
     Moduł generujący silne hasła.
